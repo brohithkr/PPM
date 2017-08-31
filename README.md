@@ -1,4 +1,4 @@
-#Python3 Package Manager
+# Python3 Package Manager
 _As if cargo + npm had a baby_
 
 ### Why PPM?
