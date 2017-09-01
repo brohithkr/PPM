@@ -1,15 +1,14 @@
 # Python3 Package Manager
 _As if cargo + npm had a baby_
 
-### Why PPM?
-It's true, there is already a reputable manager for downloading python modules, but when you look at package managers available for other languages, don't you wish Python had something better?
-
 ### Introducing PPM!
  - Download modules and libraries from PyPI, GitHub, anywhere!
  - A built-in setup utility for developing libraries.
 
-### Notes and Dependencies.
+### Why PPM?
+It's true, there is already a reputable manager for downloading python modules, but when you look at package managers available for other languages, don't you wish Python had something better?
 
+### Notes and Dependencies.
  - Certain PPM functions require Git to be used. If Git isn't installed, PPM will raise an error message and ask you to install Git.
 
 
