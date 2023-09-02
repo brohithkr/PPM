@@ -210,11 +210,11 @@ def run(args):
         run = os.path.join(curr_path, args["pass_args"][0])
     else:
         py_files = []
-        for file in os.listdir(curr_path):  #  collect all python files in scope
+        for file in os.listdir(os.path.join(curr_path,"src")):  #  collect all python files in scope
             if file.endswith(".py"):
                 py_files.append(file)
         if "main.py" in py_files:  #  if one is called main.py, run it
-            run = os.path.join(curr_path, "main.py")
+            run = os.path.join(os.path.join(curr_path,"src"), "main.py")
         else:  #  otherwise panic
             sys.exit("""No python filename passed or "main.py" file detected.""")
 
