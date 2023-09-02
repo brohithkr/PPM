@@ -3,7 +3,12 @@ import os
 from datetime import datetime
 import getpass
 import subprocess
+import toml
+import json
 
+want_venv = True
+venv_name = ".venv"
+venv_pip = "{venv_name}/bin/pip"
 
 def add(args):
     check_git()
@@ -85,7 +90,7 @@ def new(args):
     #  create project in current directory
 
     #  also creates all directories inbetween
-    new_dir_src = os.path.join(new_dir, project_name)
+    new_dir_src = os.path.join(new_dir, "src")
     os.makedirs(new_dir_src)
 
     #  now populate project with files
@@ -114,15 +119,47 @@ def new(args):
     elif project_type == "--lib":
         print("\tCreated library '{}' project".format(project_name))
 
+    pip_dict = {
+        "package":{
+            "name":project_name,
+            "author": user_name,
+            "version": "0.1"
+        },
+        "requirements": {
+
+        }
+    }
+    with open(os.path.join(new_dir, "pip.toml"), "w") as file:
+        toml.dump(pip_dict, file)
+
+def install_from_toml(path):
+    with open(path,"r") as file:
+        deps = toml.load(file)
+        print(deps)
+    
 
 def install(args):
     check_git()
+    curr_path = args["curr_path"]
+
+    os.chdir(curr_path)
+    if not os.path.isdir(os.path.join(curr_path,venv_name)):
+        os.system(f"python3 -m venv {venv_name}")
+
+    if len(args["pass_args"]) == 0:
+        install_from_toml(os.path.join(curr_path,"pip.toml"))
+    
     package = args["pass_args"][0]
-    command = "pip3 install {}".format(package)
+    command = f"{'pip3' if not want_venv else venv_pip} install {package}"
+
+
     try:
         os.system(command)
-    except:
-        sys.exit("Failed to install package.")
+        with open(os.path.join(curr_path,"pip.toml"), "w+") as file:
+            pip_dict = toml.load(file)
+            pip_dict["requirements"][package] = f"{get_data(package)['Version']}"
+    except Exception as e:
+        sys.exit("Failed to install package.",e)
 
 
 def run(args):
@@ -155,11 +192,20 @@ def check_git():
     if check != 256:    #  running the git command successfully will return code 256
         sys.exit("Please install git before using this function!")
 
+def get_data(package):
+    raw_data = subprocess.run([f"{venv_pip if want_venv else 'pip'} ", 'show', package], stdout=subprocess.PIPE).stdout.decode('ascii').split("\n")
+    data = {}
+    for i in raw_data[:-1]:
+        print(i)
+        key, value = i.split(": ", 2)
+        data[key] = value
+
+    return data
+
 if __name__ == "__main__":
 
     if len(sys.argv) > 1:
         args = {"pass_args":sys.argv[2:], "curr_path":os.getcwd()}
-
         #  NOTE: all arguments passed to functions are passed as a single dict.
 
         command = "{}({})".format(sys.argv[1], args)
