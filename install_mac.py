@@ -34,8 +34,8 @@ with open("src/bin/main.py") as file:
 from os.path import expanduser
 home = expanduser("~")
 
-new_dir_bin = os.path.join(home, "ppm/bin")
-new_dir_rsrc = os.path.join(home, "ppm/rsrc")
+new_dir_bin = os.path.join(home, "PPM/src/bin")
+new_dir_rsrc = os.path.join(home, "PPM/src/rsrc")
 
 #  create the necessary folders
 if os.path.isdir(new_dir_bin) == False:
@@ -57,16 +57,16 @@ with open(os.path.join(new_dir_rsrc, "GPL3.txt"), "w") as file:
 #  create an alias for the python3 main.py command
 
 #  open .bash_profile to write, therefore creating it if it doesn't exist
-with open(os.path.join(home, ".bash_profile"), "r+") as file:
+with open(os.path.join(home, ".bash_aliases"), "r+") as file:
     bash_profile = file.read()
-    path = os.path.join(home, "ppm/bin/main.py")
+    path = os.path.join(home, "PPM/src/bin/main.py")
 
     if "alias ppm='python3 {}'".format(path) not in bash_profile:    #  see if the alias has already been added
         #  create the alias for running ppm
         file.write("{}\n{}".format(bash_profile, "alias ppm='python3 {}'".format(path)))
 
 #  refresh the bash shell environment for changes to take effect
-os.system("source ~/.bash_profile")
+os.system("source ~/.bash_aliases")
 
 #  print success message + PPM menu
 print("Success!\nRestart the shell to access the ppm command.")
